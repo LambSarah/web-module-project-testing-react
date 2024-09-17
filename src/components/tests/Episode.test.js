@@ -1,31 +1,49 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor, rerender, fireEvent, getByText } from '@testing-library/react';
 import Episode from './../Episode';
 
 const testEpisode = {
-    id:1,
+    id: 1,
     name: "",
     image: "http://static.tvmaze.com/uploads/images/medium_landscape/67/168918.jpg",
     season: 1,
     number: 1,
-    summary: "",
+    summary: "A love letter",
     runtime: 1
 }
 
 const testEpisodeWithoutImage = {
-    //Add in approprate test data structure here.
+    id: 2,
+    name: '',
+    season: 1,
+    number: 2,
+    summary: "A love letter to the '80s classics",
+    runtime: 1
 }
 
+
 test("renders without error", () => {
-
+    render(<Episode episode={testEpisode} />)
 });
 
-test("renders the summury test passed as prop", ()=>{
-    
+test("renders the summury test passed as prop", () => {
+    render(<Episode episode={testEpisode} summary={testEpisode.summary} />)
+    console.log(testEpisode.summary)
+    const summary = screen.getByText('A love letter')
+
+    expect(summary).toBeVisible();
+    expect(summary).not.toBeNull();
+    expect(summary).toBeTruthy();
 });
 
-test("renders default image when image is not defined", ()=>{
-    
+test("renders default image when image is not defined", async () => {
+    render(<Episode episode={testEpisodeWithoutImage} />)
+
+    await waitFor(() => {
+        const altText = screen.getByAltText("./stranger_things", { exact: false });
+
+        expect(altText).toBeInTheDocument();
+    })
 })
 
 //Tasks
